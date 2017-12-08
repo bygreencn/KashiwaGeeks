@@ -1,12 +1,6 @@
 /*
  * Application.h
  * 
- *                 MIT License
- *      Copyright (c) 2017 Tomoaki Yamaguchi
- *
- *   This software is released under the MIT License.
- *   http://opensource.org/licenses/mit-license.php
- *
  *   Created on: 2017/11/25
  *       Author: tomoaki@tomy-tech.com
  *
@@ -27,6 +21,7 @@
 #include <inttypes.h>
 #include <stdio.h>
 #include <avr/pgmspace.h>
+#include <avr/power.h>
 #include <SoftwareSerial.h>
 
 void int0D2(void);
@@ -36,10 +31,21 @@ void sleep(void);
 void wakeup(void);
 void resetArduino(void);
 
+void DebugPrint(const __FlashStringHelper *format, ...);
+void ConsolePrint(const __FlashStringHelper *format, ...);
+void DebugPrint(const  char* format, ...);
+void ConsolePrint(const  char* format, ...);
+void ConsoleBegin(unsigned long baud);
+void ConsoleBegin(unsigned long baud, uint8_t rxpin, uint8_t txpin);
+void DisableConsole(void);
+void DisableDebug(void);
+
 namespace tomyApplication
 {
 
 #define ARDUINO_LED_PIN     13
+
+#define LOG_BUF_LEN 128
 
 /*======================================
  MACROs for the Appication
@@ -47,6 +53,7 @@ namespace tomyApplication
 #define TASK_LIST   TaskList_t  theTaskList[]
 #define TASK(...)         {__VA_ARGS__}
 #define END_OF_TASK_LIST  {0, 0, 0}
+#define ReRun(...)   theApplication->rerun(__VA_ARGS__)
 
 #define LedOn() theApplication->indicator(true)
 #define LedOff() theApplication->indicator(false)
@@ -86,19 +93,23 @@ public:
 
     void initialize( void);
     void run(void);
-    void systemSleep(void);
-    void disableInterrupts(void);
-    void enableInterrupts(void);
+    void rerun(void (*_callbackPtr)(), uint32_t second);
     void indicator(bool onoff);
     void setWdtInterval(uint8_t second);
     uint32_t getElapseTime(void);
 private:
+    void systemSleep(void);
+    void checkInt(uint8_t pin);
+    void disableInterrupts(void);
+    void enableInterrupts(void);
     TaskManager *  _taskMgr;
     bool    _sleepMode;
+    bool   _int0enable;
+    bool   _int1enable;
 };
 
 /*============================================
- TaskManager
+  Class TaskManager
  ============================================*/
 class TaskEvent;
 
@@ -126,7 +137,7 @@ private:
 };
 
 /*============================================
- TaskEvent
+  Class  TaskEvent
  ============================================*/
 class TaskEvent
 {
@@ -148,6 +159,29 @@ private:
     static TaskManager* _taskMgr;
 };
 
+/*============================================
+  Class  SerialLog
+ ============================================*/
+class SerialLog
+{
+public:
+    SerialLog(void);
+    ~SerialLog(void);
+    void out(bool console,  uint8_t len, const char* fmt, va_list args);
+    void out(bool console,  uint8_t len, const __FlashStringHelper* fmt, va_list args);
+    void begin(unsigned long baud);
+    void begin(unsigned long baud, uint8_t rxpin, uint8_t txpin);
+    void disableDebug(void);
+    void disableConsole(void);
+    void savePower(void);
+    void flush(void);
+private:
+    void print(char* buf);
+    SoftwareSerial* _serial;
+    bool _serialFlg;
+    bool _consoleFlg;
+    bool _debugFlg;
+};
 
 } /* tomyApplication */
 

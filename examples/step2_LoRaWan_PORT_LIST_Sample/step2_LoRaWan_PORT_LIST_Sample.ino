@@ -1,15 +1,3 @@
-/*
- * 
- *                 MIT License
- *      Copyright (c) 2017 Tomoaki Yamaguchi
- *
- *   This software is released under the MIT License.
- *   http://opensource.org/licenses/mit-license.php
- *
- *   Created on: 2017/11/25
- *       Author: tomoaki@tomy-tech.com
- *
- */
 
 #include <KashiwaGeeks.h>
 
@@ -18,19 +6,25 @@ ADB922S LoRa;
 //================================
 //          Initialize Device Function
 //================================
-#define BPS_9600           9600
-#define BPS_19200       19200
-#define BPS_57600       57600
+#define BPS_9600       9600
+#define BPS_19200     19200
+#define BPS_57600     57600
 #define BPS_115200   115200
 
 void start()
 {
     /*  Setup console */
-    Serial.begin(BPS_57600);
+    ConsoleBegin(BPS_57600);
     //DisableConsole();
     //DisableDebug();
 
-    ConsolePrint(F("**** Start*****\n"));
+    /*
+     * Enable Interrupt 0 & 1  Uncomment the following two  lines.
+     */
+    //pinMode(2, INPUT_PULLUP);
+    //pinMode(3, INPUT_PULLUP); // For ADB922S, CUT the pin3 of the Sheild.
+
+    ConsolePrint(F("**** step8_LoRaWan_PORT_LIST_Demo*****\n"));
 
     /*  setup Power save Devices */
     //power_adc_disable();          // ADC converter
@@ -40,7 +34,7 @@ void start()
     //power_twi_disable();           // I2C
 
     /*  setup ADB922S  */
-    if ( LoRa.begin(BPS_9600) == false )
+    if ( LoRa.begin(BPS_19200) == false )
     {
         while(true)
         {
@@ -51,15 +45,11 @@ void start()
         }
     }
 
+	/* set DR. therefor, a payload size is fixed. */
+    LoRa.setDr(dr3);  // dr0 to dr5
+
     /*  join LoRaWAN */
     LoRa.reconnect();
-
-
-    /*  for BME280 initialize  */
-     //bme.begin();
-
-    /*  seetup WDT interval to 1, 2, 4 or 8 seconds  */
-    //setWDT(8);    // set to 8 seconds
 }
 
 //================================
@@ -101,28 +91,23 @@ void int1D3(void)
 //================================
 //    DownLink Data handler
 //================================
-void downLinkHdl(int rc)
+void port14(void)
 {
-  if ( rc == LoRa_RC_SUCCESS )
-  {
-     uint8_t port = LoRa.getDownLinkPort();
-     if ( port == 0 )
-     {
-        return;
-     }
-     else if ( port == 14 )
-     {
-        ConsolePrint("\nPayload='%s'\n", LoRa.getDownLinkData().c_str());
-        LedOn();
-     }
-     else if ( port == 15 )
-     {
-        ConsolePrint("\nPayload='%s'\n", LoRa.getDownLinkData().c_str());
-        LedOff();
-     }
-  }
-  
+  ConsolePrint("%s\n", LoRa.getDownLinkData().c_str());
+  LedOn();
 }
+
+void port15(void)
+{
+  ConsolePrint("%s\n", LoRa.getDownLinkData().c_str());
+  LedOff();
+}
+
+PORT_LIST = { 
+  PORT(14, port14),  // port & callback
+  PORT(15, port15),
+  END_OF_PORT_LIST
+};
 
 //================================
 //    Functions to be executed periodically
@@ -149,18 +134,16 @@ void task1(void)
     ConsolePrint(F("%%RH: %2d%s%%\n"), bme_humi);
     ConsolePrint(F("Pressure: %2d Pa\n"), bme_press);
     
-    disableInterrupt();     //  INT0 & INT1 are disabled
-    downLinkHdl( LoRa.sendData(port, true, F("%04x%04x%06lx"), temp, humi, press));
-    enableInterrupt();     //  INT0 & INT1 are enabled
+    LoRa.sendString(port, true, F("%04x%04x%06lx"), temp, humi, press);
+    LoRa.checkDownLink();
 }
 
 /*-------------------------------------------------------------*/
 void task2(void)
 {
     ConsolePrint(F("\n  Task2 invoked\n\n"));
-    disableInterrupt();     //  INT0 & INT1 are disabled
-    downLinkHdl(LoRa.sendDataConfirm(port, true, F("%04x%04x%06lx"), temp, humi, press));
-    enableInterrupt();     //  INT0 & INT1 are enabled
+    LoRa.sendStringConfirm(port, true, F("%04x%04x%06lx"), temp, humi, press);
+    LoRa.checkDownLink();
 }
 
 /*-------------------------------------------------------------*/
@@ -173,13 +156,13 @@ void task3(void)
 
 //===============================
 //            Execution interval
-//    TASK( function, interval by second )
+//     TASK( function, initial offset, interval by minute )
 //===============================
 
 TASK_LIST = {
         TASK(task1, 0, 15),
-        TASK(task2, 5, 15),
-        //TASK(task3, 7, 15),
+        TASK(task2, 8, 15),
+        //TASK(task3),
         END_OF_TASK_LIST
 };
 
