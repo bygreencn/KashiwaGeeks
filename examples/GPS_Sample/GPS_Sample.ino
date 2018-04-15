@@ -1,6 +1,8 @@
 #include <KashiwaGeeks.h>
 #include <TinyGPS++.h>
 
+#define ECHO false
+
 ADB922S LoRa;
 TinyGPSPlus gps;
 SoftwareSerial gpsSerial(8, 9); // RX, TX
@@ -142,7 +144,7 @@ void GpsSend(void)
         DebugPrint(F("Lat=%"PRIu32", Lon=%"PRIu32", Alt=%"PRIu16 ", %d\n"), Latitude, Longitude, alt, hdopGps);
         DebugPrint(F("Lat=%"PRIu32", Lon=%"PRIu32", Alt=%"PRIu16 ", %d\n"), la, lo, al, hd);
 
-        LoRa.sendPayloadConfirm(port, true, &pl);
+        LoRa.sendPayloadConfirm(port, ECHO, &pl);
   }
 }
 

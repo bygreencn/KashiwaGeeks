@@ -338,7 +338,7 @@ int ADB922S::send(const __FlashStringHelper* cmd, const __FlashStringHelper* res
 //#define LORA_BUFF_LEN (20 + _maxPayloadSize+1 +1 )    // last 1 is for checking data length
 //#define LORA_BINARY_BUFF_LEN (20 + _maxPayloadSize*2+1 +1 )
 
-int ADB922S::sendString(uint8_t port, bool echo, const __FlashStringHelper* format,  ...)
+int ADB922S::sendData(uint8_t port, bool echo, const __FlashStringHelper* format,  ...)
 {
     va_list args;
     va_start(args, format);
@@ -349,7 +349,7 @@ int ADB922S::sendString(uint8_t port, bool echo, const __FlashStringHelper* form
 }
 
 
-int ADB922S::sendStringConfirm(uint8_t port, bool echo, const __FlashStringHelper* format,  ...)
+int ADB922S::sendDataConfirm(uint8_t port, bool echo, const __FlashStringHelper* format,  ...)
 {
     va_list args;
     va_start(args, format);

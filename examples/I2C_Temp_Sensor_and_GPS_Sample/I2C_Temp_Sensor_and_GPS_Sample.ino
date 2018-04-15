@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include "KGPS.h"
 
+#define ECHO false
 #define ADB        //  comment out this line for RAK811
 
 #ifdef ADB
@@ -48,7 +49,7 @@ void start()
     power_adc_disable();       // ADC converter
     power_spi_disable();       // SPI
 
-    /*  setup the ADB922S  */
+    /*  setup the LoRaWAN device  */
     if ( LoRa.begin(BPS_19200) == false )
     {
         while(true)
@@ -131,7 +132,7 @@ void sendLocation(void)
     Payload* pl = gps.getPayload();
     if (pl)
     {
-        LoRa.sendPayload(portTemp, true, pl);
+        LoRa.sendPayload(portTemp, ECHO, pl);
     }
 }
 
@@ -155,7 +156,7 @@ void sendTemp(void)
 
   Payload pl(LoRa.getMaxPayloadSize());
   pl.set_float(temp);
-  LoRa.sendPayloadConfirm(portTemp, true, &pl);
+  LoRa.sendPayloadConfirm(portTemp, ECHO, &pl);
 }
 
 /*   End of Program  */

@@ -225,7 +225,7 @@ uint8_t RAK811::getDownLinkPort( void)
 //
 //
 
-int RAK811::sendString(uint8_t port, bool echo, const __FlashStringHelper* format,  ...)
+int RAK811::sendData(uint8_t port, bool echo, const __FlashStringHelper* format,  ...)
 {
     va_list args;
     va_start(args, format);
@@ -236,7 +236,7 @@ int RAK811::sendString(uint8_t port, bool echo, const __FlashStringHelper* forma
 }
 
 
-int RAK811::sendStringConfirm(uint8_t port, bool echo, const __FlashStringHelper* format,  ...)
+int RAK811::sendDataConfirm(uint8_t port, bool echo, const __FlashStringHelper* format,  ...)
 {
     va_list args;
     va_start(args, format);

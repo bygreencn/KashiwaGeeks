@@ -112,8 +112,8 @@ public:
     bool connect(void);
     bool reconnect(void);
 
-    int sendString(uint8_t port, bool echo, const __FlashStringHelper* format, ...);
-    int sendStringConfirm(uint8_t port, bool echo, const __FlashStringHelper* format, ...);
+    int sendData(uint8_t port, bool echo, const __FlashStringHelper* format, ...);
+    int sendDataConfirm(uint8_t port, bool echo, const __FlashStringHelper* format, ...);
     int sendPayload(uint8_t port, bool echo, Payload* payload);
     int sendPayloadConfirm(uint8_t port, bool echo, Payload* payload);
 

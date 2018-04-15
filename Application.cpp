@@ -312,20 +312,23 @@ void start(void)
 
 }
 
-void sleep(void)
-{
-    DebugPrint(F("sleep\n"));
-}
-
-void wakeup(void)
-{
-    DebugPrint(F("wakeup\n"));
-}
 
 uint32_t getSysTime(void)
 {
     return theUTC;
 }
+
+
+void sleep(void)
+{
+    DebugPrint(F("\nsleep:  %ldsecs\n"), getSysTime());
+}
+
+void wakeup(void)
+{
+    DebugPrint(F("wakeup: %ldsecs\n\n"), getSysTime());
+}
+
 
 //
 //

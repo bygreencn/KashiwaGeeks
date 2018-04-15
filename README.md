@@ -118,7 +118,7 @@ ___
 **Return Value:** FRMPayload length, setup fail the -1.    
 ___    
     
-**5) int sendString(uint8_t port, bool echo, const __FlashStringHelper &format, ...);**    
+**5) int sendData(uint8_t port, bool echo, const __FlashStringHelper &format, ...);**    
 
 **Function:** Transmit String data. 11) getDownLinkData(void) can be used to check if the DownLink data is received.    
 **Parameter uint8_t port:** Data transmitted is sent to the application specified by the port.    
@@ -131,7 +131,7 @@ ___
 **Return Value LoRa_RC_ERROR:** other errors.    
 ___    
     
-**6) int sendStringConfirm(uint8_t port, bool echo, const __FlashStringHelper &format, ...);**    
+**6) int sendDataConfirm(uint8_t port, bool echo, const __FlashStringHelper &format, ...);**    
 
 **Function:** Transmit String data with confirmation request. 11) getDownLinkData(void) can be used to check if the DownLink data is received.   
 **Parameter uint8_t port:** Data transmitted is sent to the application specified by the port.    
@@ -290,7 +290,7 @@ ___
 **Return Value:** FRMPayload length, setup fail the -1.    
 ___    
     
-**5) int sendString(uint8_t port, bool echo, const __FlashStringHelper &format, ...);**    
+**5) int sendData(uint8_t port, bool echo, const __FlashStringHelper &format, ...);**    
 
 **Function:** Transmit String data. 11) getDownLinkData(void) can be used to check if the DownLink data is received.    
 **Parameter uint8_t port:** Data transmitted is sent to the application specified by the port.    
@@ -378,7 +378,7 @@ ___
 **14)  void setConfig(String param);**    
     
 **Function:** Set Configurations.        
-**Parameter String:** key:value[&key:value][&key:value]..    
+**Parameter String:** key:value         
 **Return Value:** none    
 ___
     
@@ -387,6 +387,7 @@ ___
 **Function:** Acquire the Configuration value.    
 **Parameter String** Key of a configuration parameter.    
 **Return Value:** String of a configuration parameter.    
+___
     
 **16)  void getVersion(char &version, uint8_t length);**    
       

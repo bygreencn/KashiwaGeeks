@@ -79,10 +79,10 @@ public:
     bool begin(uint32_t baudrate = 9600, uint8_t retryTx = 1 );
     bool connect(void);
     bool reconnect(void);
-    int sendString(uint8_t port, bool echo, const __FlashStringHelper* format, ...);
+    int sendData(uint8_t port, bool echo, const __FlashStringHelper* format, ...);
     int sendBinary(uint8_t port, bool echo, uint8_t* data, uint8_t dataLen);
     int sendPayload(uint8_t port, bool echo, Payload* payload);
-    int sendStringConfirm(uint8_t port, bool echo, const __FlashStringHelper* format, ...);
+    int sendDataConfirm(uint8_t port, bool echo, const __FlashStringHelper* format, ...);
     int sendPayloadConfirm(uint8_t port, bool echo, Payload* payload);
     uint8_t getDownLinkPort( void);
     Payload* getDownLinkPayload(void);
